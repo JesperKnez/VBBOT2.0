@@ -1,0 +1,28 @@
+{
+    "name": "commandkit-app",
+    "version": "0.0.0",
+    "description": "",
+    "main": "./src/index.js",
+    "scripts": {
+        "start": "node ./src/index.js",
+        "dev": "nodemon --ext js,json,ts ./src/index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "module",
+    "dependencies": {
+        "commandkit": "^0.1.10",
+        "date-fns": "^4.1.0",
+        "discord.js": "^14.21.0",
+        "dotenv": "^17.2.0",
+        "mongoose": "^8.16.4",
+        "nodemon": "^3.1.10"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.31.0",
+        "eslint": "^9.31.0",
+        "globals": "^16.3.0",
+        "typescript-eslint": "^8.37.0"
+    }
+}

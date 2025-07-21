@@ -107,11 +107,14 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
                 return;
             }
 
+            const isMainAccount = dbUser.clashAccounts.length === 0; // If this is the first account, set it as the main account
+
             // Add the new Clash account to the user's list of accounts
             dbUser.clashAccounts.push({
                 playerTag: playerTag,
                 playerName: playerData.name,
-                reminderSubscription: false
+                reminderSubscription: false,
+                isMainAccount: isMainAccount,
             });
 
             // Save the user to the database

@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
         playerTag: { type: String, required: true, unique: true },
         playerName: { type: String, required: true },
         reminderSubscription: { type: Boolean, default: false },
+        isMainAccount: { type: Boolean, default: false },
     }]
 });
 

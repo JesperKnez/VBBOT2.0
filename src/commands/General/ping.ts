@@ -1,6 +1,5 @@
 /** @type {import('commandkit').CommandData}  */
 import { SlashCommandProps } from "commandkit";
-import { type CommandInteraction } from "discord.js";
 export const data = {
     name: 'ping',
     description: 'Measure the bot\'s latency',
@@ -16,7 +15,5 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
 /** @type {import('commandkit').CommandOptions} */
 export const options = {
     // https://commandkit.js.org/typedef/CommandOptions
-    guildOnly: true,
-    devOnly: true,
     deleted: false
 }

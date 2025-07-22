@@ -1,5 +1,24 @@
 import mongoose from "mongoose";
 
+// Create interface for the config schema
+export interface IConfig {
+    creationDate: Date;
+    devGuildIds: string[];
+    devUserIds: string[];
+    devRoleIds: string[];
+    skipBuiltInValidations: boolean;
+    bulkRegister: boolean;
+    requireApiTokenVerification: boolean;
+    trophyRoles: {
+        name: string;
+        color: string;
+    }[];
+    clanList: {
+        name: string;
+        tag: string;
+    }[];
+}
+
 // Define the schema for the trophy roles
 
 const configSchema = new mongoose.Schema({
@@ -9,6 +28,7 @@ const configSchema = new mongoose.Schema({
     devRoleIds: { type: [String], default: [] },
     skipBuiltInValidations: { type: Boolean, default: false },
     bulkRegister: { type: Boolean, default: true },
+    requireApiTokenVerification: { type: Boolean, default: false }, // Removed API token requirement
     trophyRoles: {
         type: [{
             name: { type: String, required: true },

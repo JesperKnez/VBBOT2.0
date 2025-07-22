@@ -3,6 +3,7 @@ import type { SlashCommandProps } from 'commandkit'
 import { ActionRow, TextInputStyle } from 'discord.js';
 import dotenv from 'dotenv';
 import UserModel from '../../schemas/User';
+import ConfigModel, { IConfig } from '../../schemas/Config';
 dotenv.config();
 
 /** @type {import('commandkit').CommandData}  */
@@ -15,6 +16,15 @@ export const data = {
  * @param {import('commandkit').SlashCommandProps} param0 
  */
 export const run = async ({ interaction, client, handler }: SlashCommandProps) => {
+    const config = await ConfigModel.findOneAndUpdate(
+        {},
+        {}, 
+        { 
+            upsert: true,
+            new: true,
+            setDefaultsOnInsert: true
+        }
+    );
 
     const modal = new ModalBuilder()
         .setCustomId('connectModal')
@@ -24,16 +34,23 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
         .setCustomId('playerTagInput')
         .setLabel('Vul je Clash of Clans spelertag in')
         .setStyle(TextInputStyle.Short)
-
-    const playerApiTokenInput = new TextInputBuilder()
-        .setCustomId('playerApiTokenInput')
-        .setLabel('Vul je Clash of Clans API-token in.')
-        .setStyle(TextInputStyle.Short)
-
+        
     const firstActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(playerTagInput);
-    const secondActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(playerApiTokenInput);
 
-    modal.addComponents(firstActionRow, secondActionRow);
+    // If the config requires API token verification, add the second input field
+    if(config.requireApiTokenVerification) {
+        const playerApiTokenInput = new TextInputBuilder()
+            .setCustomId('playerApiTokenInput')
+            .setLabel('Vul je Clash of Clans API-token in.')
+            .setStyle(TextInputStyle.Short);
+    
+        const secondActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(playerApiTokenInput);
+        modal.addComponents(firstActionRow, secondActionRow);
+    } else {
+        modal.addComponents(firstActionRow);
+    }
+
+
 
     await interaction.showModal(modal);
 
@@ -46,13 +63,11 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
         const playerTag = modalInteraction.fields.getTextInputValue('playerTagInput');
         const playerApiToken = modalInteraction.fields.getTextInputValue('playerApiTokenInput');
 
-        // Here you would typically handle the connection logic, e.g., saving the data to a database
-        // For now, we will just send a confirmation message
-        // Verify the API token and player tag here
-        // Validate that the playerTag is correct
-        
-        try{
+
+        try {
             const startTime = performance.now();
+            
+            if(config.requireApiTokenVerification) {
             
             const response = await fetch(`https://api.clashofclans.com/v1/players/${encodeURIComponent(playerTag)}/verifytoken`,{
                 method: 'post',
@@ -64,6 +79,12 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
                     token: playerApiToken
                 })
             })
+            
+            if(!response || !response.ok){
+                throw new Error(`Error: ${response.status}`);
+            }
+
+        }
 
             const player = await fetch(`https://api.clashofclans.com/v1/players/${encodeURIComponent(playerTag)}`, {
                 headers: {
@@ -77,16 +98,10 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
             
             console.log(`Fetch call took ${duration.toFixed(2)}ms`);
             
-            if(!response || !response.ok){
-                throw new Error(`Error: ${response.status}`);
-            }
-            await modalInteraction.editReply({
-                content: `Je Clash account met tag \`${playerTag}\` is succesvol verbonden!`,
-            });
-
+            
             // If the verification is succesful, i want to store this in my MongoDB database. There is a userschema which defines a user. Inside there is an array of Clash accounts, since the user can have multiple Clash accounts connected to the bot.
             const user = await client.users.fetch(modalInteraction.user.id);
-
+            
             // If the user does not exist in the database, create a new user. Otherwise, update the existing user by adding the new Clash account. 
             let dbUser = await UserModel.findOne({ discordId: user.id });
             if (!dbUser) {
@@ -97,16 +112,18 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
                     clashAccounts: []
                 });
             }
-
+            
             // Check if the Clash account is already connected
-            const existingAccount = dbUser.clashAccounts.find((account: any) => account.playerTag === playerTag);
+            const existingAccount = await UserModel.findOne({
+                'clashAccounts.playerTag': playerTag
+            }) || null;
             if (existingAccount) {
                 await modalInteraction.editReply({
                     content: `Je Clash account met tag \`${playerTag}\` is al verbonden!`,
                 });
                 return;
             }
-
+            
             const isMainAccount = dbUser.clashAccounts.length === 0; // If this is the first account, set it as the main account
 
             // Add the new Clash account to the user's list of accounts
@@ -116,10 +133,13 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
                 reminderSubscription: false,
                 isMainAccount: isMainAccount,
             });
-
+            
             // Save the user to the database
             await dbUser.save();
-
+            
+            await modalInteraction.editReply({
+                content: `Je Clash account met tag \`${playerTag}\` is succesvol verbonden!`,
+            });
         } catch(error){
             console.error(error);
             await modalInteraction.editReply({

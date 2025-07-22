@@ -1,5 +1,6 @@
 import { CommandKit } from "commandkit";
 import { Client } from "discord.js";
+import ConfigModel from "../../schemas/Config";
 import mongoose from 'mongoose'; // Import the default mongoose instance
 
 /** * @param {import('discord.js').Client} client */
@@ -23,6 +24,7 @@ export default async function (c: Client<true>, client: Client<true>, handler: C
         serverSelectionTimeoutMS: 10000, // Timeout after 10 seconds
         });
         console.log('MongoDB connection initiated');
+
     } catch (error) {
         console.error('Failed to connect to MongoDB:', error);
     }

@@ -83,7 +83,16 @@ const configSchema = new mongoose.Schema({
                 }
             }
         }],
-        default: []
+        default: [
+            {
+                name: "Vechtersbazen!",
+                tag: "#PYPQYPYR"
+            },
+            {
+                name: "Jong v'bazen!",
+                tag: '#2Y8JPYQ89'
+            }
+        ]
     }
 });
 

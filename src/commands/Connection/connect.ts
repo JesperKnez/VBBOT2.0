@@ -27,7 +27,7 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
     );
 
     const modal = new ModalBuilder()
-        .setCustomId('connectModal')
+        .setCustomId(interaction.id)
         .setTitle('Connect Clash Account');
 
     const playerTagInput = new TextInputBuilder()
@@ -56,7 +56,7 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
 
     // Wait for the modal submit interaction
     interaction.awaitModalSubmit({
-        filter: i => i.customId === 'connectModal' && i.user.id === interaction.user.id,
+        filter: i => i.customId === interaction.id && i.user.id === interaction.user.id,
         time: 60000 // 1 minute timeout
     }).then(async modalInteraction => {
         await modalInteraction.deferReply();

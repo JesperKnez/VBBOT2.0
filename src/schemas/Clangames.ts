@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const ClangameMemberSchema = new mongoose.Schema({
-    // Define your member schema fields here
     playerTag: {
         type: String,
         required: true,

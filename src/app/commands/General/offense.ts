@@ -1,16 +1,16 @@
 /** @type {import('commandkit').CommandData}  */
-import { SlashCommandProps } from "commandkit";
-import { type CommandInteraction, AttachmentBuilder } from "discord.js";
-export const data = {
-    name: 'offense',
-    description: 'Genereer een offense report voor een clan.',
-    options: [
-        {
-            name: 'clan',
-            description: 'De clan waarvoor je een offense report wilt genereren.',
-            type: 3, // STRING
-            required: true,
-            choices: [
+import { ChatInputCommandContext } from "commandkit";
+import { type CommandInteraction, AttachmentBuilder, SlashCommandBuilder } from "discord.js";
+
+export const command = {...new SlashCommandBuilder()
+    .setName('offense')
+    .setDescription('Genereer een offense report voor een clan.')
+    .addStringOption(option =>
+        option
+            .setName('clan')
+            .setDescription('De clan waarvoor je een offense report wilt genereren.')
+            .setRequired(true)
+            .setChoices(
                 {
                     name: "Vechtersbazen!",
                     value: "#PYPQYPYR",
@@ -19,15 +19,13 @@ export const data = {
                     name: "Jong V'bazen!",
                     value: "#2Y8JPYQ69",
                 }
-            ]
-        }
-    ]
-}
+            )
+    )
+    .toJSON(),
+    guilds: [process.env.DEVELOPMENT_GUILD_ID] // Add your guild IDs here
+};
 
-/**
- * @param {import('commandkit').SlashCommandProps} param0 
- */
-export const run = async ({ interaction, client, handler }: SlashCommandProps) => {
+export const chatInput = async ({ interaction, client }: ChatInputCommandContext) => {
     await interaction.deferReply();
     const clanTag = interaction.options.getString('clan', true);
     
@@ -62,14 +60,6 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
             content: '❌ An error occurred while generating the offense report. Please try again.'
         });
     }
-}
-
-/** @type {import('commandkit').CommandOptions} */
-export const options = {
-    // https://commandkit.js.org/typedef/CommandOptions
-    guildOnly: true,
-    devOnly: true,
-    deleted: false
 }
 
 async function generateCSVScript(clanTag: any): Promise<any> {

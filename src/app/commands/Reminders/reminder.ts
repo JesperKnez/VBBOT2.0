@@ -1,8 +1,9 @@
 /** @type {import('commandkit').CommandData}  */
-import { SlashCommandProps } from "commandkit";
+import { ChatInputCommandContext } from "commandkit";
 import { ActionRowBuilder, ChatInputCommandInteraction, Client, ComponentType, SlashCommandBuilder, StringSelectMenuBuilder } from "discord.js";
 import UserModel from '../../schemas/User';
-export const data = new SlashCommandBuilder()
+
+export const command = {...new SlashCommandBuilder()
     .setName('reminder')
     .setDescription('Stel herinneringen in')
     .addSubcommand(subcommand =>
@@ -15,11 +16,11 @@ export const data = new SlashCommandBuilder()
             .setName('unsubscribe')
             .setDescription('Meld je accounts af voor herinneringen')
     )
+    .toJSON(),
+    guilds: [process.env.DEVELOPMENT_GUILD_ID]
+};
 
-/**
- * @param {import('commandkit').SlashCommandProps} param0 
- */
-export const run = async ({ interaction, client, handler }: SlashCommandProps) => {
+export const chatInput = async ({ interaction, client }: ChatInputCommandContext) => {
     await interaction.deferReply();
 
     // Handle the subcommands
@@ -34,7 +35,7 @@ export const options = {
     // https://commandkit.js.org/typedef/CommandOptions
     guildOnly: true,
     devOnly: true,
-    deleted: false
+    deleted: true
 }
 
 async function reminderSubscribe(interaction: ChatInputCommandInteraction, client: Client) {

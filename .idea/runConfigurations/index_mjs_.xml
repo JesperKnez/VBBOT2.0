@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="index.mjs " type="NodeJSConfigurationType" focusToolWindowBeforeRun="true" application-parameters="dev" nameIsGenerated="true" node-parameters="&quot;--inspect&quot;" path-to-js-file="node_modules/commandkit/bin/index.mjs " typescript-loader="bundled" working-dir="$PROJECT_DIR$">
+    <method v="2" />
+  </configuration>
+</component>

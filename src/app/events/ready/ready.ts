@@ -1,11 +1,20 @@
-import { CommandKit } from "commandkit";
 import { Client } from "discord.js";
-import ConfigModel from "../../schemas/Config";
 import mongoose from 'mongoose'; // Import the default mongoose instance
+import { REST, Routes } from 'discord.js';
+
+const rest = new REST().setToken(process.env.DISCORD_TOKEN || '');
+
 
 /** * @param {import('discord.js').Client} client */
-export default async function (c: Client<true>, client: Client<true>, handler: CommandKit){
-    console.log(`${client?.user?.tag} is online!`);
+export default async function (client: Client<true>){
+    console.log(`${client?.user?.username} is online!`);
+
+    // Delete all existing commands
+    console.log('Deleting all existing commands...');
+    await rest.put(Routes.applicationCommands(client.user.id), {
+        body: []
+    })
+
         // Set up event listeners BEFORE connecting
     mongoose.connection.on('connected', () => {
         console.log('Connected to MongoDB successfully!');

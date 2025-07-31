@@ -1,38 +1,13 @@
 /** @type {import('commandkit').CommandData}  */
-import { SlashCommandProps } from "commandkit";
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Client, ComponentType, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import ClangameModel from '../../schemas/Clangames';
-import ConfigModel from '../../schemas/Config';
-import { ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
+import { TextInputStyle } from 'discord.js';
 import { format } from "date-fns";
+import { ChatInputCommandContext } from "commandkit";
 
 // Function to get clan choices from config
-async function getClanChoices() {
-    try {
-        const config = await ConfigModel.findOne();
-        if (!config || !config.clanList || config.clanList.length === 0) {
-            // Fallback to default clans if no config found
-            return [
-                { name: "Vechtersbazen!", value: "#PYPQYPYR" },
-                { name: "Jong v'bazen!", value: "#2Y8JPYQ89" }
-            ];
-        }
-        
-        return config.clanList.map(clan => ({
-            name: clan.name,
-            value: clan.tag
-        }));
-    } catch (error) {
-        console.error('Error fetching clan choices:', error);
-        // Fallback to default clans
-        return [
-            { name: "Vechtersbazen!", value: "#PYPQYPYR" },
-            { name: "Jong v'bazen!", value: "#2Y8JPYQ89" }
-        ];
-    }
-}
-
-export const data = new SlashCommandBuilder()
+export const command = {
+    ...new SlashCommandBuilder()
     .setName('clangames')
     .setDescription('Beheer clangames')
     .addSubcommand(subcommand =>
@@ -94,9 +69,12 @@ export const data = new SlashCommandBuilder()
                         { name: "Jong v'bazen!", value: "#2Y8JPYQ89" }
                     )
             )
-    );
+    )
+    .toJSON(),
+    guilds: [process.env.DEVELOPMENT_GUILD_ID] // Add your guild IDs here
+}
 
-export const run = async ({ interaction, client, handler }: SlashCommandProps) => {
+export const chatInput = async ({ interaction, client}: ChatInputCommandContext) => {
     // Handle the subcommands
     const subcommand = interaction.options.getSubcommand();
     const selectedClan = interaction.options.getString('clan', true);

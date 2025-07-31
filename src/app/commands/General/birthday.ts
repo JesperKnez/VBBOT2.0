@@ -1,21 +1,21 @@
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
-import type { SlashCommandProps } from 'commandkit'
-import { TextInputStyle } from 'discord.js';
+import type { ChatInputCommandContext } from 'commandkit'
+import { SlashCommandBuilder, TextInputStyle } from 'discord.js';
 import dotenv from 'dotenv';
 import UserModel from '../../schemas/User';
 import { parse, isValid, isPast, format } from 'date-fns';
 dotenv.config();
 
 /** @type {import('commandkit').CommandData}  */
-export const data = {
-    name: 'birthday',
-    description: 'Stel je verjaardag in',
+export const command = {
+    ...new SlashCommandBuilder()
+        .setName('birthday')
+        .setDescription('Stel je verjaardag in')
+        .toJSON(),
+    guilds: [process.env.DEVELOPMENT_GUILD_ID] // Add your guild IDs here
 }
 
-/**
- * @param {import('commandkit').SlashCommandProps} param0 
- */
-export const run = async ({ interaction, client, handler }: SlashCommandProps) => {
+export const chatInput = async ({ interaction, client }: ChatInputCommandContext) => {
 
     const modal = new ModalBuilder()
         .setCustomId('birthdayModal')
@@ -90,12 +90,4 @@ export const run = async ({ interaction, client, handler }: SlashCommandProps) =
             ephemeral: true
         });
     });
-}
-
-/** @type {import('commandkit').CommandOptions} */
-export const options = {
-    // https://commandkit.js.org/typedef/CommandOptions
-    guildOnly: true,
-    devOnly: true,
-    deleted: false
 }

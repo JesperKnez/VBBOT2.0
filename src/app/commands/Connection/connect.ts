@@ -1,21 +1,21 @@
 import { ActionRowBuilder, ModalBuilder, TextInputBuilder } from '@discordjs/builders';
-import type { SlashCommandProps } from 'commandkit'
-import { ActionRow, TextInputStyle } from 'discord.js';
+import type { ChatInputCommandContext } from 'commandkit'
+import { ActionRow, SlashCommandBuilder, TextInputStyle } from 'discord.js';
 import dotenv from 'dotenv';
 import UserModel from '../../schemas/User';
 import ConfigModel, { IConfig } from '../../schemas/Config';
 dotenv.config();
 
 /** @type {import('commandkit').CommandData}  */
-export const data = {
-    name: 'connect',
-    description: 'Verbind je clash account met de bot'
-}
+export const command = {
+    ...new SlashCommandBuilder()
+        .setName('connect')
+        .setDescription('Verbind je clash account met de bot')
+        .toJSON(),
+    guilds: [process.env.DEVELOPMENT_GUILD_ID] // Add your guild IDs here
+};
 
-/**
- * @param {import('commandkit').SlashCommandProps} param0 
- */
-export const run = async ({ interaction, client, handler }: SlashCommandProps) => {
+export const chatInput = async ({ interaction, client }: ChatInputCommandContext) => {
     const config = await ConfigModel.findOneAndUpdate(
         {},
         {}, 

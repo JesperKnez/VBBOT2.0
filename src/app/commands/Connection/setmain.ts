@@ -1,15 +1,17 @@
 /** @type {import('commandkit').CommandData}  */
-import { SlashCommandProps } from "commandkit";
+import { ChatInputCommandContext } from "commandkit";
 import { ActionRowBuilder, ChatInputCommandInteraction, Client, ComponentType, SlashCommandBuilder, StringSelectMenuBuilder } from "discord.js";
 import UserModel from '../../schemas/User';
-export const data = new SlashCommandBuilder()
-    .setName('setmain')
-    .setDescription('Stel je hoofdaccount in.')
 
-/**
- * @param {import('commandkit').SlashCommandProps} param0 
- */
-export const run = async ({ interaction, client, handler }: SlashCommandProps) => {
+export const command = {
+    ...new SlashCommandBuilder()
+        .setName('setmain')
+        .setDescription('Stel je hoofdaccount in.')
+        .toJSON(),
+    guilds: [process.env.DEVELOPMENT_GUILD_ID] // Add your guild IDs here
+}
+
+export const chatInput = async ({ interaction, client }: ChatInputCommandContext) => {
     await interaction.deferReply();
 
     const dbUser =  await UserModel.findOne({ discordId: interaction.user.id });

@@ -1,5 +1,7 @@
 node_modules
 build
+.commandkit
+.idea
 npm-debug.log
 .env
 .DS_Store

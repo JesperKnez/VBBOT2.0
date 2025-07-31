@@ -12,7 +12,8 @@
     "license": "ISC",
     "type": "module",
     "dependencies": {
-        "commandkit": "^0.1.10",
+        "@commandkit/devtools": "^0.0.0-dev.20250731125657",
+        "commandkit": "^1.0.0-dev.20250731125657",
         "date-fns": "^4.1.0",
         "discord.js": "^14.21.0",
         "dotenv": "^17.2.0",

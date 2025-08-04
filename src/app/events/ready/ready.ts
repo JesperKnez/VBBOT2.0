@@ -34,6 +34,8 @@ export default async function (client: Client<true>){
         });
         console.log('MongoDB connection initiated');
 
+        // Get all the emojis from the emoji server
+
     } catch (error) {
         console.error('Failed to connect to MongoDB:', error);
     }

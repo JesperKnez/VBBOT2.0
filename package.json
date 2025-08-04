@@ -13,14 +13,18 @@
     "type": "module",
     "dependencies": {
         "@commandkit/devtools": "^0.0.0-dev.20250731125657",
+        "canvas": "^3.1.2",
         "commandkit": "^1.0.0-dev.20250731125657",
         "date-fns": "^4.1.0",
         "discord.js": "^14.21.0",
         "dotenv": "^17.2.0",
         "mongoose": "^8.16.4",
-        "nodemon": "^3.1.10"
+        "nodemon": "^3.1.10",
+        "sharp": "^0.34.3"
     },
     "devDependencies": {
+        "@babel/traverse": "^7.28.0",
+        "@babel/types": "^7.28.2",
         "@eslint/js": "^9.31.0",
         "eslint": "^9.31.0",
         "globals": "^16.3.0",
